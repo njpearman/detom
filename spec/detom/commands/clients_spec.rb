@@ -43,6 +43,18 @@ RSpec.describe Commands::Clients do
           expect { subject }.to output("foo_client\n").to_stdout
         end
       end
+
+      context "with more than one client file in ~/.detom/clients" do
+        before do
+          FileUtils.mkdir_p File.join(test_app_folder, "foo_client")
+          FileUtils.mkdir_p File.join(test_app_folder, "rii_client")
+          FileUtils.mkdir_p File.join(test_app_folder, "suu_client")
+        end
+
+        it "lists one client" do
+          expect { subject }.to output("foo_client\nrii_client\nsuu_client\n").to_stdout
+        end
+      end
     end
   end
 end
