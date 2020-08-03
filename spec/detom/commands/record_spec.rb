@@ -49,5 +49,20 @@ describe Commands::Record do
         expect(store["raa_client"]).to eq({ today => [39] })
       end
     end
+
+    context "when recording time spent today on three clients" do
+      let(:store) { Hash.new }
+
+      it "stores the time spent on the clients" do
+        today = Time.now.strftime("%Y-%m-%d")
+        record_command = described_class.new(store)
+        record_command.call("foo_client", "6m")
+        record_command.call("raa_client", "39m")
+        record_command.call("gii_client", "72m")
+        expect(store["foo_client"]).to eq({ today => [6] })
+        expect(store["raa_client"]).to eq({ today => [39] })
+        expect(store["gii_client"]).to eq({ today => [72] })
+      end
+    end
   end
 end
