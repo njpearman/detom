@@ -70,6 +70,12 @@ class App
     end
   end
 
+  desc "Archive named client. Literally copied the client file into ~/.detom/archive/client-<today>.json"
+  arg_name "client"
+  command :archive do |c|
+    exit_now! "archive has not yet been implemented"
+  end
+
   pre do |global,command,options,args|
     # Pre logic here
     # Return true to proceed; false to abort and not call the
