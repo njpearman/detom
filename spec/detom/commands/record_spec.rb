@@ -16,25 +16,31 @@ class JsonFileStore
   end
 
   def save!
-    File.open(@filepath, "w") {|f| YAML.dump(@store, f) }
+    Dir.chdir(@filepath) do
+      @store.each do |key, value|
+        File.open(File.join(@filepath, key), "w") {|f| YAML.dump(@store[key], f) }
+      end
+    end
   end
 end
 
 describe Commands::Record do
   describe "#call" do
-    let(:test_filepath) { File.join(File.dirname(__FILE__), "..", "..", "..", "tmp", "record_test.json") }
+    let(:test_filepath) { File.join(File.dirname(__FILE__), "..", "..", "..", "tmp", "record_test") }
     let(:store) { JsonFileStore.new(test_filepath) }
+
+    before { Dir.mkdir test_filepath unless Dir.exists? test_filepath }
+    after { FileUtils.rm_rf test_filepath if Dir.exists? test_filepath }
 
     context "when recording time spent today on a client" do
       it "stores the time spent on the client" do
         today = Time.now.strftime("%Y-%m-%d")
         described_class.new(store).call("foo_client", "6m")
         expect(store["foo_client"]).to eq({ today => [6] })
-        expect(File.read(test_filepath)).to eq <<-JSON
+        expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
-foo_client:
-  '#{Time.now.strftime("%Y-%m-%d")}':
-  - 6
+'#{Time.now.strftime("%Y-%m-%d")}':
+- 6
 JSON
       end
     end
