@@ -6,19 +6,20 @@ RSpec.describe Commands::Clients do
 
     context "for app directory setup" do
       let(:dir) { class_double("Dir").as_stubbed_const }
+      let!(:expected_directory) { File.join(Dir.home, ".detom") }
 
       def stub_app_directory
         dir = class_double("Dir").as_stubbed_const
 
-        expect(dir).to receive(:exist?).with("~/.detom").and_return true
-        expect(dir).to_not receive(:mkdir).with "~/.detom"
-        expect(dir).to receive(:chdir).with(Commands::Clients::DEFAULT_APP_DIRECTORY)
+        expect(dir).to receive(:exist?).with(expected_directory).and_return true
+        expect(dir).to_not receive(:mkdir).with expected_directory
+        expect(dir).to receive(:chdir).with(JsonFileStore::DEFAULT_APP_DIRECTORY)
       end
 
       it "creates the app directory in ~/.detom if it does not already exist" do
-        expect(dir).to receive(:exist?).with("~/.detom").and_return false
-        expect(dir).to receive(:mkdir).with "~/.detom"
-        expect(dir).to receive(:chdir).with(Commands::Clients::DEFAULT_APP_DIRECTORY)
+        expect(dir).to receive(:exist?).with(expected_directory).and_return false
+        expect(dir).to receive(:mkdir).with expected_directory
+        expect(dir).to receive(:chdir).with(JsonFileStore::DEFAULT_APP_DIRECTORY)
 
         expect { subject }.to output("").to_stdout
       end
@@ -33,7 +34,7 @@ RSpec.describe Commands::Clients do
       let(:test_project_root) { File.join(File.dirname(__FILE__), "..", "..", "..") }
       let(:test_app_folder) { File.join(test_project_root, "tmp", "detom") }
 
-      before { stub_const "Commands::Clients::DEFAULT_APP_DIRECTORY", test_app_folder }
+      before { stub_const "JsonFileStore::DEFAULT_APP_DIRECTORY", test_app_folder }
       after { FileUtils.rm_rf test_app_folder }
 
       context "with one client file in ~/.detom/clients" do
