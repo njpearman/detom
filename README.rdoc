@@ -1,6 +1,4 @@
-= detom
-
-Describe your project here
+:include:README.markdown
 
 :include:detom.rdoc
 
