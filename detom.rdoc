@@ -1,0 +1,5 @@
+= detom
+
+Generate this with
+    detom _doc
+After you have described your command line interface

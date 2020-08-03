@@ -1,0 +1,6 @@
+= detom
+
+Describe your project here
+
+:include:detom.rdoc
+
