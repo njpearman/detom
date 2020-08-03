@@ -14,37 +14,16 @@ end
 class App
   extend GLI::App
 
-  program_desc 'Describe your application here'
+  program_desc "Minimalistic project and client time tracking on the command line"
 
   version Detom::VERSION
 
   subcommand_option_handling :normal
   arguments :strict
 
-  desc 'Describe some switch here'
-  switch [:s,:switch]
-
-  desc 'Describe some flag here'
-  default_value 'the default'
-  arg_name 'The name of the argument'
-  flag [:f,:flagname]
-
-  desc 'Describe clients here'
-  arg_name 'Describe arguments to clients here'
+  desc "List all clients currently being tracked"
   command :clients do |c|
-    c.desc 'Describe a switch to clients'
-    c.switch :s
-
-    c.desc 'Describe a flag to clients'
-    c.default_value 'default'
-    c.flag :f
     c.action do |global_options,options,args|
-
-      # Your command logic here
-
-      # If you have any errors, just raise them
-      # raise "that command made no sense"
-
       begin 
         Commands::Clients.new.call
       rescue StandardError => e
@@ -54,8 +33,8 @@ class App
     end
   end
 
-  desc 'Record some time spent on a client. <client> and <time> are required. <client> is the name of the client and time is an amount of time in minutes, e.g. 39m, or hours, e.g. 3h'
-  arg_name '<client> <time>'
+  desc "Record some time spent on a client. <client> and <time> are required. <client> is the name of the client and <time> is an amount of time in minutes, e.g. 39m, or hours, e.g. 3h"
+  arg_name "<client> <time>"
   command :record do |c|
     c.action do |global_options,options,args|
       help_now! "You must provide record with <client> and <time> as arguments" if args.length < 2
@@ -70,10 +49,12 @@ class App
     end
   end
 
-  desc "Archive named client. Literally copied the client file into ~/.detom/archive/client-<today>.json"
+  desc "Archive tracking for a client or a project. Literally copies the client file into ~/.detom/archive/client-<today>.json"
   arg_name "client"
   command :archive do |c|
-    exit_now! "archive has not yet been implemented"
+    c.action do |global_options, options, args|
+      exit_now! "archive has not yet been implemented"
+    end
   end
 
   pre do |global,command,options,args|
