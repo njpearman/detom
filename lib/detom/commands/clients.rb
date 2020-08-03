@@ -8,7 +8,9 @@ module Commands
     def call
       create_root_directory unless root_directory_exists?
 
-      puts "clients command ran"
+      Dir.chdir DEFAULT_APP_DIRECTORY do
+        puts Dir["*"]
+      end
     end
 
     private
