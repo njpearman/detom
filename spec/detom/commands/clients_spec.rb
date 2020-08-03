@@ -20,12 +20,12 @@ RSpec.describe Commands::Clients do
         expect(dir).to receive(:mkdir).with "~/.detom"
         expect(dir).to receive(:chdir).with(Commands::Clients::DEFAULT_APP_DIRECTORY)
 
-        expect(subject).to be_nil
+        expect { subject }.to output("").to_stdout
       end
 
       it "does not create app directory if ~/.detom/ already exists" do
         stub_app_directory
-        expect(subject).to be_nil
+        expect { subject }.to output("").to_stdout
       end
     end
 
