@@ -15,6 +15,8 @@ module Commands
       else
         client[today] = [ time_to_log.to_i ]
       end
+
+      puts "Logged #{time_to_log} for #{client_name}"
     end
   end
 end
