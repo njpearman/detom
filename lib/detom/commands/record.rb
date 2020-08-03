@@ -16,6 +16,7 @@ module Commands
         client[today] = [ time_to_log.to_i ]
       end
 
+      @store.save!
       puts "Logged #{time_to_log} for #{client_name}"
     end
   end

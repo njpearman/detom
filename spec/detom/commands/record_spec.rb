@@ -1,20 +1,45 @@
 require "detom/commands/record"
+require "yaml"
+
+class JsonFileStore
+  def initialize(filepath)
+    @store = {}
+    @filepath = filepath
+  end
+  
+  def [](key)
+    @store[key]
+  end
+
+  def []=(key, value)
+    @store[key] = value
+  end
+
+  def save!
+    File.open(@filepath, "w") {|f| YAML.dump(@store, f) }
+  end
+end
 
 describe Commands::Record do
   describe "#call" do
-    context "when recording time spent today on a client" do
-      let(:store) { Hash.new }
+    let(:test_filepath) { File.join(File.dirname(__FILE__), "..", "..", "..", "tmp", "record_test.json") }
+    let(:store) { JsonFileStore.new(test_filepath) }
 
+    context "when recording time spent today on a client" do
       it "stores the time spent on the client" do
         today = Time.now.strftime("%Y-%m-%d")
         described_class.new(store).call("foo_client", "6m")
         expect(store["foo_client"]).to eq({ today => [6] })
+        expect(File.read(test_filepath)).to eq <<-JSON
+---
+foo_client:
+  '#{Time.now.strftime("%Y-%m-%d")}':
+  - 6
+JSON
       end
     end
 
     context "when recording time spent today twice on a client" do
-      let(:store) { Hash.new }
-
       it "stores the time spent on the client" do
         today = Time.now.strftime("%Y-%m-%d")
         record_command = described_class.new(store)
@@ -25,8 +50,6 @@ describe Commands::Record do
     end
 
     context "when recording time spent today thrice on a client" do
-      let(:store) { Hash.new }
-
       it "stores the time spent on the client" do
         today = Time.now.strftime("%Y-%m-%d")
         record_command = described_class.new(store)
@@ -38,8 +61,6 @@ describe Commands::Record do
     end
 
     context "when recording time spent today on two clients" do
-      let(:store) { Hash.new }
-
       it "stores the time spent on the clients" do
         today = Time.now.strftime("%Y-%m-%d")
         record_command = described_class.new(store)
@@ -51,8 +72,6 @@ describe Commands::Record do
     end
 
     context "when recording time spent today on three clients" do
-      let(:store) { Hash.new }
-
       it "stores the time spent on the clients" do
         today = Time.now.strftime("%Y-%m-%d")
         record_command = described_class.new(store)
