@@ -11,9 +11,9 @@ module Commands
       client = @store[client_name]
 
       if client[today]
-        client[today] << time_to_log
+        client[today] << time_to_log.to_i
       else
-        client[today] = [ time_to_log ]
+        client[today] = [ time_to_log.to_i ]
       end
     end
   end
