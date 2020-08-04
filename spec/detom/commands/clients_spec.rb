@@ -11,14 +11,14 @@ RSpec.describe Commands::Clients do
       def stub_app_directory
         dir = class_double("Dir").as_stubbed_const
 
-        expect(dir).to receive(:exist?).with(expected_directory).and_return true
+        expect(dir).to receive(:exist?).twice.with(expected_directory).and_return true
         expect(dir).to_not receive(:mkdir).with expected_directory
-        expect(dir).to receive(:chdir).with(YamlFileStore::DEFAULT_APP_DIRECTORY)
+        expect(dir).to receive(:chdir).exactly(3).with(YamlFileStore::DEFAULT_APP_DIRECTORY)
       end
 
       it "creates the app directory in ~/.detom if it does not already exist" do
-        expect(dir).to receive(:exist?).with(expected_directory).and_return false
-        expect(dir).to receive(:mkdir).with expected_directory
+        expect(dir).to receive(:exist?).twice.with(expected_directory).and_return false
+        expect(dir).to receive(:mkdir).twice.times.with expected_directory
         expect(dir).to receive(:chdir).with(YamlFileStore::DEFAULT_APP_DIRECTORY)
 
         expect { subject }.to output("").to_stdout
@@ -38,7 +38,10 @@ RSpec.describe Commands::Clients do
       after { FileUtils.rm_rf test_app_folder }
 
       context "with one client file in ~/.detom/clients" do
-        before { FileUtils.mkdir_p File.join(test_app_folder, "foo_client") }
+        before do
+          FileUtils.mkdir_p test_app_folder
+          Dir.chdir(test_app_folder) { FileUtils.touch "foo_client" }
+        end
 
         it "lists one client" do
           expect { subject }.to output("foo_client\n").to_stdout
@@ -47,9 +50,10 @@ RSpec.describe Commands::Clients do
 
       context "with more than one client file in ~/.detom/clients" do
         before do
-          FileUtils.mkdir_p File.join(test_app_folder, "foo_client")
-          FileUtils.mkdir_p File.join(test_app_folder, "rii_client")
-          FileUtils.mkdir_p File.join(test_app_folder, "suu_client")
+          FileUtils.mkdir_p test_app_folder
+          Dir.chdir(test_app_folder) { FileUtils.touch "foo_client" }
+          Dir.chdir(test_app_folder) { FileUtils.touch "rii_client" }
+          Dir.chdir(test_app_folder) { FileUtils.touch "suu_client" }
         end
 
         it "lists one client" do

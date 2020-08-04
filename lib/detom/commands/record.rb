@@ -6,7 +6,7 @@ module Commands
 
     def call(client_name, time_to_log, day_month = nil)
       if day_month
-        help_now! "Day/month is an unrecognised format. Use `%d-%m` format" unless day_month =~ /\d\d-\d\d/
+        raise "Day/month is an unrecognised format. Use `%d-%m` format" unless day_month =~ /\d\d-\d\d/
 
         day = day_month.split("-").first
         month = day_month.split("-").last

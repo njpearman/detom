@@ -36,12 +36,13 @@ class App
   desc "Record some time spent on a client. <client> and <time> are required. <client> is the name of the client and <time> is an amount of time in minutes, e.g. 39m, or hours, e.g. 3h"
   arg_name "<client> <time>"
   command :record do |c|
-    c.action do |global_options,options,args|
+    c.flag [:d, :"day-month"]
+    c.action do |global_options, options, args|
       help_now! "You must provide record with <client> and <time> as arguments" if args.length < 2
 
       begin
         store = YamlFileStore.new
-        Commands::Record.new(store).call args[0], args[1]
+        Commands::Record.new(store).call args[0], args[1], options[:d]
       rescue StandardError => e
         STDERR.puts e.message
         STDERR.puts e.backtrace

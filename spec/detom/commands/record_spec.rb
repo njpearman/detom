@@ -117,7 +117,50 @@ JSON
 JSON
         end
       end
+    end
 
+    context "when recording time for different days" do
+      let(:five_days_ago) { Time.now - (5 * 24 * 60 * 60) }
+      let(:ten_days_ago) { Time.now - (10 * 24 * 60 * 60) }
+      let(:expected_formatted_date_1) { five_days_ago.strftime("%Y-%m-%d") }
+      let(:expected_formatted_date_2) { ten_days_ago.strftime("%Y-%m-%d") }
+
+      context "once for one client" do
+        it "stores the time spent on the client" do
+          subject.call("foo_client", "6m", five_days_ago.strftime("%d-%m"))
+          subject.call("foo_client", "45m", ten_days_ago.strftime("%d-%m"))
+          expect(store["foo_client"]).to eq({ expected_formatted_date_1 => [6], expected_formatted_date_2 => [45] })
+          expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
+---
+'#{expected_formatted_date_1}':
+- 6
+'#{expected_formatted_date_2}':
+- 45
+JSON
+        end
+      end
+    end
+
+    context "when recording additional time for one client" do
+      let(:five_days_ago) { Time.now - (5 * 24 * 60 * 60) }
+      let(:ten_days_ago) { Time.now - (10 * 24 * 60 * 60) }
+      let(:expected_formatted_date_1) { five_days_ago.strftime("%Y-%m-%d") }
+      let(:expected_formatted_date_2) { ten_days_ago.strftime("%Y-%m-%d") }
+
+      context "once for one client" do
+        it "stores the time spent on the client" do
+          File.open(File.join(test_filepath, "foo_client"), "w") {|f| f.write YAML.dump(expected_formatted_date_1 => [6]) }
+          subject.call("foo_client", "45m", ten_days_ago.strftime("%d-%m"))
+          expect(store["foo_client"]).to eq({ expected_formatted_date_1 => [6], expected_formatted_date_2 => [45] })
+          expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
+---
+'#{expected_formatted_date_1}':
+- 6
+'#{expected_formatted_date_2}':
+- 45
+JSON
+        end
+      end
     end
   end
 end
