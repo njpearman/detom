@@ -1,6 +1,6 @@
 require "yaml"
 
-class JsonFileStore
+class YamlFileStore
   DEFAULT_APP_DIRECTORY = File.join Dir.home, ".detom"
     
   def initialize(filepath=DEFAULT_APP_DIRECTORY)

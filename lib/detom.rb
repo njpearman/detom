@@ -1,6 +1,6 @@
 require "detom/version.rb"
 
-require "detom/json_file_store"
+require "detom/yaml_file_store"
 require "detom/commands/clients"
 require "detom/commands/record"
 

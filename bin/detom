@@ -40,7 +40,7 @@ class App
       help_now! "You must provide record with <client> and <time> as arguments" if args.length < 2
 
       begin
-        store = JsonFileStore.new
+        store = YamlFileStore.new
         Commands::Record.new(store).call args[0], args[1]
       rescue StandardError => e
         STDERR.puts e.message

@@ -1,10 +1,10 @@
 require "detom/commands/record"
-require "detom/json_file_store"
+require "detom/yaml_file_store"
 
 describe Commands::Record do
   describe "#call" do
     let(:test_filepath) { File.join(File.dirname(__FILE__), "..", "..", "..", "tmp", "record_test") }
-    let(:store) { JsonFileStore.new(test_filepath) }
+    let(:store) { YamlFileStore.new(test_filepath) }
     let(:today) { Time.now.strftime("%Y-%m-%d") }
 
     before { Dir.mkdir test_filepath unless Dir.exists? test_filepath }

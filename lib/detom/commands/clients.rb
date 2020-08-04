@@ -4,7 +4,7 @@ module Commands
     end
 
     def call
-      store = JsonFileStore.new
+      store = YamlFileStore.new
       store.prepare!
 
       Dir.chdir store.path do
