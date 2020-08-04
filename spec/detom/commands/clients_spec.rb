@@ -62,6 +62,14 @@ RSpec.describe Commands::Clients do
           expect { subject }.to output("foo_client\nrii_client\nsuu_client\n").to_stdout
         end
       end
+
+      context "with unordered empty client file" do
+        let(:clients) { %w(rii_client foo_client baa_client suu_client) }
+
+        it "lists one client" do
+          expect { subject }.to output("baa_client\nfoo_client\nrii_client\nsuu_client\n").to_stdout
+        end
+      end
     end
   end
 end

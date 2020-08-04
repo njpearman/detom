@@ -10,7 +10,7 @@ class YamlFileStore
   end
 
   def each
-    enumerator = @store.enum_for
+    enumerator = @store.sort.enum_for
     
     loop do
       case current = enumerator.next
