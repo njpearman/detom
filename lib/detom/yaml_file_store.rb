@@ -9,6 +9,19 @@ class YamlFileStore
     prepare!
   end
 
+  def each
+    enumerator = @store.enum_for
+    
+    loop do
+      case current = enumerator.next
+      when current.kind_of?(Array) then yield **current
+      else yield current
+      end
+    end
+
+    self
+  end
+
   def path
     @filepath
   end

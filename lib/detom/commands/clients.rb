@@ -1,14 +1,18 @@
 module Commands
   class Clients
-    def initialize
+    def initialize(store=YamlFileStore.new)
+      @store = store
     end
 
     def call
-      store = YamlFileStore.new
-      store.prepare!
+      @store.each do |client, tracked_time|
+        if tracked_time.nil?
+          puts client
+          next
+        end
 
-      Dir.chdir store.path do
-        puts Dir["*"]
+        total_time = tracked_time.map {|key, value| value.reduce(&:+) }.reduce &:+
+        puts "#{client} #{total_time}m"
       end
     end
   end
