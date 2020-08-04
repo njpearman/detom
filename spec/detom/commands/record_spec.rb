@@ -101,5 +101,23 @@ JSON
         end
       end
     end
+
+    context "when recording time for a day in the past" do
+      let(:five_days_ago) { Time.now - (5 * 24 * 60 * 60) }
+      let(:expected_formatted_date) { five_days_ago.strftime("%Y-%m-%d") }
+
+      context "once for one client" do
+        it "stores the time spent on the client" do
+          subject.call("foo_client", "6m", five_days_ago.strftime("%d-%m"))
+          expect(store["foo_client"]).to eq({ expected_formatted_date => [6] })
+          expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
+---
+'#{expected_formatted_date}':
+- 6
+JSON
+        end
+      end
+
+    end
   end
 end
