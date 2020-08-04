@@ -37,38 +37,30 @@ RSpec.describe Commands::Clients do
         end
       end
 
-      subject { described_class.new(StubStore.new(clients)).call }
+      subject { -> { described_class.new(StubStore.new(clients)).call } }
 
       context "with one empty client file" do
         let(:clients) { %w(foo_client) }
 
-        it "lists one client" do
-          expect { subject }.to output("foo_client\n").to_stdout
-        end
+        it { is_expected.to output("foo_client\n").to_stdout }
       end
 
       context "with one client file tracking time" do
         let(:clients) { {"foo_client" => { "2020-07-29" => [30, 63] } } }
 
-        it "lists one client with the total time spent in minutes" do
-          expect { subject }.to output("foo_client 93m\n").to_stdout
-        end
+        it { is_expected.to output("foo_client 93m\n").to_stdout }
       end
 
       context "with more than one empty client file" do
         let(:clients) { %w(foo_client rii_client suu_client) }
 
-        it "lists one client" do
-          expect { subject }.to output("foo_client\nrii_client\nsuu_client\n").to_stdout
-        end
+        it { is_expected.to output("foo_client\nrii_client\nsuu_client\n").to_stdout }
       end
 
       context "with unordered empty client file" do
         let(:clients) { %w(rii_client foo_client baa_client suu_client) }
 
-        it "lists one client" do
-          expect { subject }.to output("baa_client\nfoo_client\nrii_client\nsuu_client\n").to_stdout
-        end
+        it { is_expected.to output("baa_client\nfoo_client\nrii_client\nsuu_client\n").to_stdout }
       end
     end
   end
