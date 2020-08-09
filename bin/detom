@@ -38,11 +38,11 @@ class App
   command :record do |c|
     c.flag [:d, :"day-month"]
     c.action do |global_options, options, args|
-      help_now! "You must provide record with <time> and <client> as arguments" if args.length < 2
-
       begin
         store = YamlFileStore.new
-        Commands::Record.new(store).call args[0], args[1], options[:d]
+        local_config = Detom::LocalConfig.new
+        Commands::Record.new(store, local_config)
+          .call args[0], args[1], options[:d]
       rescue StandardError => e
         STDERR.puts e.message
         STDERR.puts e.backtrace

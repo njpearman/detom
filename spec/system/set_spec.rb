@@ -20,7 +20,7 @@ describe "detom set" do
     let(:command) { "bundle exec ../bin/detom set" }
     let(:expected_stderr) do 
       <<ERR
-Found .detom but it is a directory. Are you running `detom set` in your home directory?
+error: Found .detom but it is a directory. Are you running `detom set` in your home directory?
 `detom set` should be run in the root of a project folder
 ERR
 end
