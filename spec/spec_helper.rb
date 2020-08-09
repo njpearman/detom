@@ -44,6 +44,12 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
+  config.order = :random
+
+  # Runs and outputs all assertions in a test regardless of failures.
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true
+  end
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin
