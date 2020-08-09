@@ -45,21 +45,49 @@ OUT
       expect(stdout).to eq expected_stdout
       expect(File.exist? ".detom").to be_truthy
     end
+
+    context "and config already exists" do
+      before { %x(bundle exec ../bin/detom set faa) }
+      let(:expected_stdout) do
+  <<OUT
+Previous config: {:client=>"faa"}
+New config: {:client=>"foo"}
+OUT
+      end
+
+      it do
+        expect(stdout).to eq expected_stdout
+        expect(File.exist? ".detom").to be_truthy
+      end
+    end
   end
 
-  context "when a client is provided and config already exists" do
-    let(:command) { "bundle exec ../bin/detom set faa" }
-    before { %x(bundle exec ../bin/detom set foo) }
-    
+  context "when a client and project are provided" do
+    let(:command) { "bundle exec ../bin/detom set foo project_tree" }
     let(:expected_stdout) do
 <<OUT
-Previous config: {:client=>"foo"}
-New config: {:client=>"faa"}
+New config: {:client=>"foo", :project=>"project_tree"}
 OUT
     end
+
     it do
       expect(stdout).to eq expected_stdout
       expect(File.exist? ".detom").to be_truthy
+    end
+
+    context "and config already exists" do
+      before { %x(bundle exec ../bin/detom set faa) }
+      let(:expected_stdout) do
+  <<OUT
+Previous config: {:client=>"faa"}
+New config: {:client=>"foo", :project=>"project_tree"}
+OUT
+      end
+
+      it do
+        expect(stdout).to eq expected_stdout
+        expect(File.exist? ".detom").to be_truthy
+      end
     end
   end
 end
