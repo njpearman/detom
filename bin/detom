@@ -50,6 +50,35 @@ class App
     end
   end
 
+  desc "Sets a default client and project for the current folder, by creating or updating a .detom file. Run in the root of a project directory"
+  arg_name "<client> [project]"
+  command :set do |c|
+    c.action do |global_options, options, args|
+      if Dir.exist? ".detom"
+        $stderr.puts "Found .detom but it is a directory. Are you running `detom set` in your home directory?\n`detom set` should be run in the root of a project folder"
+        next
+      end
+
+      if File.exist? ".detom"
+        local_config = YAML.load File.read(".detom")
+        puts "Previous config: #{local_config}"
+      else
+        local_config = {}
+      end
+
+      local_config[:client] = args[0]
+      if args[1]
+        local_config[:project] = args[1]
+      else
+        local_config.delete :project
+      end
+
+
+      File.open(".detom", "w") {|file| file.write YAML.dump(local_config) }
+      puts "New config: #{local_config}"
+    end
+  end
+
   desc "Archive tracking for a client or a project. Literally copies the client file into ~/.detom/archive/client-<today>.json"
   arg_name "client"
   command :archive do |c|
