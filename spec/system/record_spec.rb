@@ -19,8 +19,6 @@ describe "detom record" do
   let(:command) { "bundle exec ../bin/detom record 90m" }
   let(:expected_stdout) do
     <<OUT
-Previous config: {:client=>"foofoo"}
-Previous config: {:client=>"foofoo"}
 Logged 90m for foofoo
 OUT
   end

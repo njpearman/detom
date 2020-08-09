@@ -4,7 +4,7 @@ require "detom/yaml_file_store"
 describe Commands::Record do
   subject { described_class.new(store, local_config) }
   let(:store) { YamlFileStore.new(test_filepath) }
-  let(:local_config) { instance_double("Detom::LocalConfig", client: nil) }
+  let(:local_config) { Detom::LocalConfig.new }
 
   describe "#call" do
     let(:test_filepath) { File.join(File.dirname(__FILE__), "..", "..", "..", "tmp", "record_test") }
@@ -15,10 +15,9 @@ describe Commands::Record do
 
     context "when recording time today" do
       context "for project with a configured client" do
-        let(:local_config) { instance_double("Detom::LocalConfig") }
-
         it do
-          expect(local_config).to receive(:client).twice.and_return("faa")
+          local_config.load_from! client: "faa"
+
           subject.call("12m")
           expect(store["faa"]).to eq({ today => [12] })
         end

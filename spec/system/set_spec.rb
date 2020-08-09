@@ -50,7 +50,6 @@ OUT
       before { %x(bundle exec ../bin/detom set faa) }
       let(:expected_stdout) do
   <<OUT
-Previous config: {:client=>"faa"}
 New config: {:client=>"foo"}
 OUT
       end
@@ -79,7 +78,6 @@ OUT
       before { %x(bundle exec ../bin/detom set faa) }
       let(:expected_stdout) do
   <<OUT
-Previous config: {:client=>"faa"}
 New config: {:client=>"foo", :project=>"project_tree"}
 OUT
       end

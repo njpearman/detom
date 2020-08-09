@@ -3,16 +3,22 @@ require 'yaml'
 module Detom
   class LocalConfig
     def load!
+      return if @store
+
       if Dir.exist? ".detom"
         raise "Found .detom but it is a directory. Are you running `detom set` in your home directory?\n`detom set` should be run in the root of a project folder"
       end
 
       if File.exist? ".detom"
         @store = YAML.load File.read(".detom")
-        puts "Previous config: #{@store}"
       else
         @store = {}
       end
+    end
+
+    def load_from!(config)
+      @store ||= {}
+      @store.merge! config
     end
 
     def save!
@@ -26,28 +32,27 @@ module Detom
       puts "New config: #{@store}"
     end
 
-    def client=(value)
-      @store[:client] = value
-    end
-
-    def project=(value)
-      @store[:project] = value
-    end
-
     def method_missing(name, *args, &block)
       super unless handle?(name)
 
-      handle(name)
+      handle(name, *args)
     end
 
     private
       def handle?(name)
-        name == :client
+        %i(client client= project=).include? name
       end
 
-      def handle(name)
+      def handle(name, *args)
         self.load!
-        @store[name]
+
+        setter_match = name.match /(.*)=\B/
+
+        if setter_match && setter_match[1]
+          @store[setter_match[1].to_sym] = args.shift
+        else
+          @store[name]
+        end
       end
   end
 end
