@@ -4,7 +4,7 @@ module Commands
       @store = store
     end
 
-    def call(client_name, time_to_log, day_month = nil)
+    def call(time_to_log, client_name, day_month = nil)
       if day_month
         raise "Day/month is an unrecognised format. Use `%d-%m` format" unless day_month =~ /\d\d-\d\d/
 

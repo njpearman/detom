@@ -15,7 +15,7 @@ describe Commands::Record do
     context "when recording time today" do
       context "once for one client" do
         it "stores the time spent on the client" do
-          subject.call("foo_client", "6m")
+          subject.call("6m", "foo_client")
           expect(store["foo_client"]).to eq({ today => [6] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
@@ -27,8 +27,8 @@ JSON
 
       context "twice for one client" do
         it "stores the time spent on the client" do
-          subject.call("foo_client", "6m")
-          subject.call("foo_client", "39m")
+          subject.call("6m", "foo_client")
+          subject.call("39m", "foo_client")
           expect(store["foo_client"]).to eq({ today => [6, 39] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
@@ -41,9 +41,9 @@ JSON
 
       context "three times for one client" do
         it "stores the time spent on the client" do
-          subject.call("foo_client", "6m")
-          subject.call("foo_client", "39m")
-          expect { subject.call("foo_client", "92m") }.to output("Logged 92m for foo_client\n").to_stdout
+          subject.call("6m", "foo_client")
+          subject.call("39m", "foo_client")
+          expect { subject.call("92m", "foo_client") }.to output("Logged 92m for foo_client\n").to_stdout
           expect(store["foo_client"]).to eq({ today => [6, 39, 92] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
@@ -58,8 +58,8 @@ JSON
       context "once each for two clients" do
         it "stores the time spent on the clients" do
           record_command = described_class.new(store)
-          record_command.call("foo_client", "6m")
-          record_command.call("raa_client", "39m")
+          record_command.call("6m", "foo_client")
+          record_command.call("39m", "raa_client")
           expect(store["foo_client"]).to eq({ today => [6] })
           expect(store["raa_client"]).to eq({ today => [39] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
@@ -77,9 +77,9 @@ JSON
 
       context "once each for three clients" do
         it "stores the time spent on the clients" do
-          subject.call("foo_client", "6m")
-          subject.call("raa_client", "39m")
-          subject.call("gii_client", "72m")
+          subject.call("6m", "foo_client")
+          subject.call("39m", "raa_client")
+          subject.call("72m", "gii_client")
           expect(store["foo_client"]).to eq({ today => [6] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
@@ -108,7 +108,7 @@ JSON
 
       context "once for one client" do
         it "stores the time spent on the client" do
-          subject.call("foo_client", "6m", five_days_ago.strftime("%d-%m"))
+          subject.call("6m", "foo_client", five_days_ago.strftime("%d-%m"))
           expect(store["foo_client"]).to eq({ expected_formatted_date => [6] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
@@ -127,8 +127,8 @@ JSON
 
       context "once for one client" do
         it "stores the time spent on the client" do
-          subject.call("foo_client", "6m", five_days_ago.strftime("%d-%m"))
-          subject.call("foo_client", "45m", ten_days_ago.strftime("%d-%m"))
+          subject.call("6m", "foo_client", five_days_ago.strftime("%d-%m"))
+          subject.call("45m", "foo_client", ten_days_ago.strftime("%d-%m"))
           expect(store["foo_client"]).to eq({ expected_formatted_date_1 => [6], expected_formatted_date_2 => [45] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
@@ -150,7 +150,7 @@ JSON
       context "once for one client" do
         it "stores the time spent on the client" do
           File.open(File.join(test_filepath, "foo_client"), "w") {|f| f.write YAML.dump(expected_formatted_date_1 => [6]) }
-          subject.call("foo_client", "45m", ten_days_ago.strftime("%d-%m"))
+          subject.call("45m", "foo_client", ten_days_ago.strftime("%d-%m"))
           expect(store["foo_client"]).to eq({ expected_formatted_date_1 => [6], expected_formatted_date_2 => [45] })
           expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
