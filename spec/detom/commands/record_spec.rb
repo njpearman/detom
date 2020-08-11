@@ -62,6 +62,13 @@ JSON
 JSON
           end
         end
+
+        context "in an unrecognised format" do
+          it "raises an error" do
+            expect { subject.call("700s", "foo_client") }.to raise_error Commands::Record::TIME_TO_LOG_FORMAT_MESSAGE
+
+          end
+        end
       end
 
       context "twice for one client" do
