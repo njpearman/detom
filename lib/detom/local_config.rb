@@ -22,11 +22,7 @@ module Detom
     end
 
     def save!
-      @store.keys.each do |key|
-        if @store[key].nil?
-          @store.delete key
-        end
-      end
+      @store.keys.each {|key| @store.delete(key) if @store[key].nil? }
 
       File.open(".detom", "w") {|file| file.write YAML.dump(@store) }
       puts "New config: #{@store}"
