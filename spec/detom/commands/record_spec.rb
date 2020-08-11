@@ -39,14 +39,28 @@ describe Commands::Record do
       end
 
       context "once for one client" do
-        it "stores the time spent on the client" do
-          subject.call("6m", "foo_client")
-          expect(store["foo_client"]).to eq({ today => [6] })
-          expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
+        context "in minutes" do
+          it "stores the time spent on the client" do
+            subject.call("6m", "foo_client")
+            expect(store["foo_client"]).to eq({ today => [6] })
+            expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
 ---
 '#{today}':
 - 6
 JSON
+          end
+        end
+
+        context "in hours" do
+          it "stores the time spent on the client in minutes" do
+            subject.call("6h", "foo_client")
+            expect(store["foo_client"]).to eq({ today => [360] })
+            expect(File.read(File.join(test_filepath, "foo_client"))).to eq <<-JSON
+---
+'#{today}':
+- 360
+JSON
+          end
         end
       end
 

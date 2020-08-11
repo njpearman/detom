@@ -10,6 +10,11 @@ module Commands
         raise "Cannot log time without a client. Either provide <client> to detom record, or configure a value for client in this directory using detom set."
       end
 
+      multiplier = case time_to_log
+        when /\d+m/ then 1
+        when /\d+h/ then 60
+      end
+
       if day_month
         raise "Day/month is an unrecognised format. Use `%d-%m` format" unless day_month =~ /\d\d-\d\d/
 
@@ -27,7 +32,7 @@ module Commands
 
       client[day_month] = [] unless client[day_month]
 
-      client[day_month] << time_to_log.to_i
+      client[day_month] << multiplier * time_to_log.to_i
 
       @store.save!
       $stdout.puts "Logged #{time_to_log} for #{client_name}"
