@@ -3,6 +3,7 @@ require "detom/version.rb"
 require "detom/yaml_file_store"
 require "detom/local_config"
 
+require "detom/commands/client"
 require "detom/commands/clients"
 require "detom/commands/record"
 require "detom/commands/set"

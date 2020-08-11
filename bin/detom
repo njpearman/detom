@@ -58,6 +58,15 @@ class App
     end
   end
 
+  desc "Outputs time tracked against one client in detail."
+  arg_name "<client>"
+  command :client do |c|
+    c.action do |global_options, options, args|
+      store = YamlFileStore.new
+      Commands::Client.new(store).call args[0]
+    end
+  end
+
   desc "Archive tracking for a client or a project. Literally copies the client file into ~/.detom/archive/client-<today>.json"
   arg_name "client"
   command :archive do |c|

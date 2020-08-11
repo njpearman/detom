@@ -1,10 +1,14 @@
 module Commands
   class Client
+    CLIENT_REQUIRED_MESSAGE = "You must provide a client name to detom client."
+
     def initialize(store)
       @store = store
     end
 
     def call(client_name)
+      raise CLIENT_REQUIRED_MESSAGE if client_name.nil? || client_name.empty?
+
       client = @store[client_name]
 
       if client

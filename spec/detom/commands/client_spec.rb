@@ -7,6 +7,20 @@ describe Commands::Client do
     let(:store) { {} }
     let(:today) { Time.now.strftime("%Y-%m-%d") }
 
+    context "with a nil client" do 
+      let(:client_name) { nil }
+      it do 
+        expect { subject }.to raise_error Commands::Client::CLIENT_REQUIRED_MESSAGE
+      end
+    end
+
+    context "with no client given" do 
+      let(:client_name) { "" }
+      it do 
+        expect { subject }.to raise_error Commands::Client::CLIENT_REQUIRED_MESSAGE
+      end
+    end
+
     context "with a client that has no time logged" do
       let(:client_name) { "foo_client" }
       it do
