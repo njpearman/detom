@@ -9,12 +9,26 @@ module Commands
 
       if client
         output = client.sort.map do |day, times|
-          "#{day}: #{times.join}m"
+          "#{day}: #{format times}"
         end.join "\n"
         $stdout.puts output
       else
         $stdout.puts "No time logged against #{client_name}" 
       end
+    end
+
+    private 
+    def format(times)
+      total_time = times.inject(0, &:+)
+
+      parts = []
+      hours = (total_time / 60).floor
+      parts << "#{hours}h" if hours > 0
+
+      minutes = total_time % 60
+      parts << "#{minutes}m" if minutes > 0
+
+      parts.join
     end
   end
 end

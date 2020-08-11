@@ -5,6 +5,7 @@ describe Commands::Client do
     subject { described_class.new(store).call(client_name) }
 
     let(:store) { {} }
+    let(:today) { Time.now.strftime("%Y-%m-%d") }
 
     context "with a client that has no time logged" do
       let(:client_name) { "foo_client" }
@@ -16,10 +17,36 @@ describe Commands::Client do
     context "with a client that has one entry today" do
       let(:client_name) { "foo_client" }
 
-      let(:store) { { "foo_client" => { Time.now.strftime("%Y-%m-%d") => [50] } } }
+      let(:store) { { "foo_client" => { today => [50] } } }
       it do
         expected_output = <<OUT
-#{Time.now.strftime("%Y-%m-%d")}: 50m
+#{today}: 50m
+OUT
+        expect { subject }.to output(expected_output).to_stdout
+      end
+    end
+
+    context "with a client that has two entries today" do
+      let(:client_name) { "foo_client" }
+
+      let(:store) { { "foo_client" => { today => [50, 5] } } }
+      it do
+        expected_output = <<OUT
+#{today}: 55m
+OUT
+        expect { subject }.to output(expected_output).to_stdout
+      end
+    end
+
+    context "with a client that has two entries today and one in the past" do
+      let(:client_name) { "foo_client" }
+      let(:time_before) { (Time.now - (60*60*24*10)).strftime("%Y-%m-%d") }
+
+      let(:store) { { "foo_client" => { today => [50, 5], time_before => [130] } } }
+      it do
+        expected_output = <<OUT
+#{time_before}: 2h10m
+#{today}: 55m
 OUT
         expect { subject }.to output(expected_output).to_stdout
       end
