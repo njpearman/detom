@@ -22,7 +22,7 @@ module Commands
         day_month = Time.now.strftime("%Y-%m-%d")
       end
 
-      client_name = @local_config.client || client_name
+      client_name = client_name || @local_config.client 
 
       @store[client_name] = {} if @store[client_name].nil?
 

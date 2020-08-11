@@ -15,11 +15,19 @@ describe Commands::Record do
 
     context "when recording time today" do
       context "for project with a configured client" do
-        it do
-          local_config.load_from! client: "faa"
+        before { local_config.load_from! client: "faa" }
 
+        it do
           subject.call("12m")
           expect(store["faa"]).to eq({ today => [12] })
+        end
+
+        context "and explicitly providing a client" do
+          it do
+            subject.call("50m", "bloo")
+            expect(store["bloo"]).to eq({ today => [50] })
+            expect(store["faa"]).to be_nil
+          end
         end
       end
 
