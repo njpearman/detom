@@ -6,6 +6,13 @@ describe Commands::Record do
   let(:store) { YamlFileStore.new(test_filepath) }
   let(:local_config) { Detom::LocalConfig.new }
 
+  before(:all) do
+    @the_stdout = $stdout
+    $stdout = File.open(File::NULL, 'w') 
+  end
+
+  after(:all) { $stdout = @the_stdout }
+
   describe "#call" do
     let(:test_filepath) { File.join(File.dirname(__FILE__), "..", "..", "..", "tmp", "record_test") }
     let(:today) { Time.now.strftime("%Y-%m-%d") }
