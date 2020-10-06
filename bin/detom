@@ -88,7 +88,7 @@ class App
 
   command :mark do |c|
     c.action do |global_options, options, args|
-      exit_now! "mark has not yet been implemented"
+      Commands::Mark.new.call args[0]
     end
   end
   

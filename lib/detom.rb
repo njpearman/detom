@@ -5,6 +5,7 @@ require "detom/local_config"
 
 require "detom/commands/client"
 require "detom/commands/clients"
+require "detom/commands/mark"
 require "detom/commands/record"
 require "detom/commands/set"
 
