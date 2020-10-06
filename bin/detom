@@ -76,22 +76,28 @@ class App
   end
 
   desc "Use to mark the start / stop time on a client. This can then be used to record an amount of time against that client."
-  arg_name "client"
-  switch [:e, :end],
-    desc: "Registers the mark as the end of a period."
-
-  switch [:l, :list],
-    desc: "Displays all stored marks for the client."
-
-  switch [:C, :clear],
-    desc: "Clears all stored marks for the client."
-
+  arg_name "<client>"
   command :mark do |c|
+    c.switch [:clear], desc: "Clears all stored marks for the client."
+
     c.action do |global_options, options, args|
-      Commands::Mark.new.call args[0]
+      exit_now! "client must be provided" unless args[0]
+
+      if options[:clear]
+        Commands::Mark.new.clear args[0]
+      else
+        Commands::Mark.new.call args[0]
+      end
     end
   end
   
+  desc "Lists all currently saved marks"
+  command :marks do |c|
+    c.action do |_, _, _|
+      Commands::Mark.new.list
+    end
+  end
+
   pre do |global,command,options,args|
     # Pre logic here
     # Return true to proceed; false to abort and not call the
